@@ -22,10 +22,205 @@
 		</script>
 	</head>
 	<body>
+		<!--
+			repl
+		-->
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<p>Usa el prefijo e2e-</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						element(by.css('.link')) // mal!!
+						element(by.css('.e2e-link')) // bien!!
+					</code></pre>						
+				</section>
+				<section>
+					<p>Usa async awit en vez de .then</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						browser.getCurrentUrl().then(function(url) {
+							expect(url).toEqual('www.github.com');
+						});
+
+						// vs
+
+						const url = await browser.getCurrentUrl();
+
+						expect(url).toEqual('www.github.com');
+					</code></pre>						
+				</section>
+				<section>
+					<p>identificar más rapido que browswe wait falla</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						browser.wait(() => {
+							return false;
+						});
+
+						// x segundos despues
+						// Error: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL.
+
+						browser.wait(() => {
+							return false;
+						}, 1000, 'custom message');
+
+						// Failed: custom message
+						// Wait timed out after 1000ms	
+					</code></pre>	
+				</section>
+									
+				<!-- expected conditions -->
+				<section>
+					<h1>Expected conditions</h1>
+				</section>
+				<section>
+					<p>Los e2e TODO es asíncrono, por tanto tenemos que esperar por cualquier cosa asincrona antes de continuar.</p>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const browser.get(URL);
+						const button = element(by.css('.link'))
+						const isClickable = EC.elementToBeClickable(button);						
+						const browser.wait(isClickable, 5000);
+						button.click();
+					</code></pre>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const button = element(by.css('.button'));
+						const list = element(by.css('.list-items'));
+
+						button.click();
+
+						const isVisible = EC.visibilityOf(list);						
+						const browser.wait(isVisible, 5000);
+						
+						// a partir de aqui podemos interactual tranquilamente con list
+					</code></pre>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const urlChanged = function() {
+							return browser.getCurrentUrl().then(function(url) {
+								return url === 'www.github.com';
+							});
+						};
+
+						const posts = element(by.css('.e2e-posts'));
+
+						var condition = EC.and(urlChanged, posts);
+						browser.get(URL);
+						browser.wait(condition, 5000);
+					</code></pre>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const button = element(by.css('.link'))
+						const isClickable = EC.elementToBeClickable(button);						
+						const browser.wait(isClickable, 5000);
+						button.click();
+
+						browser.wait(EC.textToBePresentInElement(button, 'delete'), 5000);
+
+						button.click();
+					</code></pre>
+				</section>
+				<!-- end expected conditions -->
+
+				<!-- helpers -->
+				<section>
+					<h1>Helpers</h1>
+				</section>
+				<section>
+					<p>Los helpers son objectos que ayudan a manejer trozos de código, estos trozos pueden ser un component pequeño o la página entera.</p>
+				</section>
+				
+				<section>
+					<h3>MAL</h3>
+					<pre><code class="typescript" data-trim data-noescape>
+						describe('Posts', () => {
+							it('publish', () => {
+								// contamos los post al principio
+								const oldPosts = element.all(by.css('.posts')).count();
+
+								// rellenamos el campo de titulo
+								element(by.css('.title')).sendKeys('title post');
+
+								// enviamos el formulario
+								element(by.css('.form-submit')).click();
+
+								// esperamos que nos salga el mensaje de exito
+								browser.wait(() => {
+									return element(by.css('.success')).isPresent();
+								});
+
+								// vemos si hay más posts que antes
+								const newPosts = element.all(by.css('.posts')).count();
+								expect(newPosts).toBeGreaterThan(oldPosts);
+							});
+						});
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Bien</h3>
+					<pre><code class="typescript" data-trim data-noescape>
+						describe('Posts', () => {
+							it('publish', () => {
+								const postPage = new PostPage();
+
+								const oldPosts = postPage.posts().count();
+
+								const postForm = new PostForm();
+
+								postForm.title('title post');
+								postForm.submit();
+
+								const newPosts = postPage.posts().count();
+								expect(newPosts).toBeGreaterThan(oldPosts);
+							});
+						});
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Helpers</h3>
+					<pre><code class="typescript" data-trim data-noescape>
+						export class PostPage {
+							public el: ElementFinder = null;
+							
+							constructor() {
+								this.el = element(by.css('.e2e-posts-page'));
+								browser.wait(EC.visibilityOf(this.el)); 
+							}
+
+							posts() {
+								// usamos como selector padre el selector del constructor
+								return this.el.all(by.css('.e2e-post'));
+							}
+						}
+
+						export class PostForm {
+							public el: ElementFinder = null;
+							
+							constructor() {
+								this.el = element(by.css('.e2e-posts-form'));
+								browser.wait(EC.visibilityOf(this.el));
+							}
+
+							title(text) {
+								this.el.element(by.css('.e2e-title')).sendKeys(text);
+							}
+
+							send(text) {
+								this.el.element(by.css('.e2e-submit')).click();
+
+								const successMsg = element.all(by.css('e2e-success'));
+																
+								return browser.wait(EC.visibilityOf(successMsg));
+							}								
+						}							
+					</code></pre>
+				</section>
+				<!-- end helpers -->
 			</div>
 		</div>
 
@@ -41,7 +236,12 @@
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { 
+						hljs.configure({
+							tabReplace: '  ',
+						})
+						hljs.initHighlightingOnLoad(); 
+					} }
 				]
 			});
 		</script>
