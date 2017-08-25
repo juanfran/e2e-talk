@@ -49,6 +49,26 @@
 					</code></pre>						
 				</section>
 				<section>
+					<p>¿Qué está pasando?? I</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						browser.pause();
+					</code></pre>
+					<p>roto en node 8, cambiar temporalmente a 7 si quieres usarlo</p>
+				</section>
+				<section>
+					<p>¿Qué está pasando?? II</p>
+					<p>Puedes abrir la consola e inspeccionar lo que quieras</p>
+					<p>En el terminal donde lanzaste los test puedes introducir comandos</p>
+					<p>escribe "c" avanza un paso en los tests</p>
+					<p>escribe "repl" para pasar al modo interactivo</p>
+				</section>
+				<section>
+					<p>¿Qué está pasando?? III</p>
+					<p>browser.explore()</p>
+					<p>Pausa el navegador y te perminte escribir comandos en la terminal por ejemplo element(by.css('.e2e-button')).isPresent();</p>
+					<p>igual que pause + repl</p>
+				</section>				
+				<section>
 					<p>identificar más rapido que browswe wait falla</p>
 					<pre><code class="typescript" data-trim data-noescape>
 						browser.wait(() => {
@@ -72,7 +92,7 @@
 					<h1>Expected conditions</h1>
 				</section>
 				<section>
-					<p>Los e2e TODO es asíncrono, por tanto tenemos que esperar por cualquier cosa asincrona antes de continuar.</p>
+					<p>Los e2e TODO es asíncrono, por tanto tenemos que esperar por cualquier cosa asincrona antes de continuar, si no vas a tener un bug futuro :)</p>
 				</section>
 				<section>
 					<pre><code class="typescript" data-trim data-noescape>
