@@ -28,6 +28,16 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
+					<ul>
+						<li>Tips</li>
+						<li>Helpers</li>
+						<li>EC</li>
+						<li>debug</li>
+					</ul>
+				</section>
+
+				<!-- tips varios -->
+				<section>
 					<p>Usa el prefijo e2e-</p>
 					<pre><code class="typescript" data-trim data-noescape>
 						element(by.css('.link')) // mal!!
@@ -48,102 +58,7 @@
 						expect(url).toEqual('www.github.com');
 					</code></pre>						
 				</section>
-				<section>
-					<p>¿Qué está pasando?? I</p>
-					<pre><code class="typescript" data-trim data-noescape>
-						browser.pause();
-					</code></pre>
-					<p>roto en node 8, cambiar temporalmente a 7 si quieres usarlo</p>
-				</section>
-				<section>
-					<p>¿Qué está pasando?? II</p>
-					<p>Puedes abrir la consola e inspeccionar lo que quieras</p>
-					<p>En el terminal donde lanzaste los test puedes introducir comandos</p>
-					<p>escribe "c" avanza un paso en los tests</p>
-					<p>escribe "repl" para pasar al modo interactivo</p>
-				</section>
-				<section>
-					<p>¿Qué está pasando?? III</p>
-					<p>browser.explore()</p>
-					<p>Pausa el navegador y te perminte escribir comandos en la terminal por ejemplo element(by.css('.e2e-button')).isPresent();</p>
-					<p>igual que pause + repl</p>
-				</section>				
-				<section>
-					<p>identificar más rapido que browswe wait falla</p>
-					<pre><code class="typescript" data-trim data-noescape>
-						browser.wait(() => {
-							return false;
-						});
-
-						// x segundos despues
-						// Error: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL.
-
-						browser.wait(() => {
-							return false;
-						}, 1000, 'custom message');
-
-						// Failed: custom message
-						// Wait timed out after 1000ms	
-					</code></pre>	
-				</section>
-									
-				<!-- expected conditions -->
-				<section>
-					<h1>Expected conditions</h1>
-				</section>
-				<section>
-					<p>Los e2e TODO es asíncrono, por tanto tenemos que esperar por cualquier cosa asincrona antes de continuar, si no vas a tener un bug futuro :)</p>
-				</section>
-				<section>
-					<pre><code class="typescript" data-trim data-noescape>
-						const browser.get(URL);
-						const button = element(by.css('.link'))
-						const isClickable = EC.elementToBeClickable(button);						
-						const browser.wait(isClickable, 5000);
-						button.click();
-					</code></pre>
-				</section>
-				<section>
-					<pre><code class="typescript" data-trim data-noescape>
-						const button = element(by.css('.button'));
-						const list = element(by.css('.list-items'));
-
-						button.click();
-
-						const isVisible = EC.visibilityOf(list);						
-						const browser.wait(isVisible, 5000);
-						
-						// a partir de aqui podemos interactual tranquilamente con list
-					</code></pre>
-				</section>
-				<section>
-					<pre><code class="typescript" data-trim data-noescape>
-						const urlChanged = function() {
-							return browser.getCurrentUrl().then(function(url) {
-								return url === 'www.github.com';
-							});
-						};
-
-						const posts = element(by.css('.e2e-posts'));
-
-						var condition = EC.and(urlChanged, posts);
-						browser.get(URL);
-						browser.wait(condition, 5000);
-					</code></pre>
-				</section>
-				<section>
-					<pre><code class="typescript" data-trim data-noescape>
-						const button = element(by.css('.link'))
-						const isClickable = EC.elementToBeClickable(button);						
-						const browser.wait(isClickable, 5000);
-						button.click();
-
-						browser.wait(EC.textToBePresentInElement(button, 'delete'), 5000);
-
-						button.click();
-					</code></pre>
-				</section>
-				<!-- end expected conditions -->
+				<!-- end tips varios -->
 
 				<!-- helpers -->
 				<section>
@@ -152,7 +67,7 @@
 				<section>
 					<p>Los helpers son objectos que ayudan a manejer trozos de código, estos trozos pueden ser un component pequeño o la página entera.</p>
 				</section>
-				
+					
 				<section>
 					<h3>MAL</h3>
 					<pre><code class="typescript" data-trim data-noescape>
@@ -240,7 +155,118 @@
 						}							
 					</code></pre>
 				</section>
-				<!-- end helpers -->
+				<!-- end helpers -->	
+				
+				<!-- expected conditions -->
+				<section>
+					<h1>Expected conditions</h1>
+				</section>
+				<section>
+					<p>Los e2e TODO es asíncrono, por tanto tenemos que esperar por cualquier cosa asincrona antes de continuar, si no vas a tener un bug futuro :)</p>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const browser.get(URL);
+						const button = element(by.css('.link'))
+						const isClickable = EC.elementToBeClickable(button);						
+						const browser.wait(isClickable, 5000);
+						button.click();
+					</code></pre>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const button = element(by.css('.button'));
+						const list = element(by.css('.list-items'));
+
+						button.click();
+
+						const isVisible = EC.visibilityOf(list);						
+						const browser.wait(isVisible, 5000);
+						
+						// a partir de aqui podemos interactual tranquilamente con list
+					</code></pre>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const urlChanged = function() {
+							return browser.getCurrentUrl().then(function(url) {
+								return url === 'www.github.com';
+							});
+						};
+
+						const posts = element(by.css('.e2e-posts'));
+
+						var condition = EC.and(urlChanged, EC.visibilityOf(posts));
+						browser.get(URL);
+						browser.wait(condition, 5000);
+					</code></pre>
+				</section>
+				<section>
+					<pre><code class="typescript" data-trim data-noescape>
+						const button = element(by.css('.link'))
+						const isClickable = EC.elementToBeClickable(button);						
+						const browser.wait(isClickable, 5000);
+						button.click();
+
+						browser.wait(EC.textToBePresentInElement(button, 'delete'), 5000);
+
+						button.click();
+					</code></pre>
+				</section>
+				<!-- end expected conditions -->				
+
+				<!-- Qué está pasando -->
+				<section>
+					<p>¿Qué está pasando?? I</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						browser.pause();
+					</code></pre>
+					<p>roto en node 8, cambiar temporalmente a 7 si quieres usarlo</p>
+				</section>
+				<section>
+					<p>¿Qué está pasando?? II</p>
+					<p>Puedes abrir la consola e inspeccionar lo que quieras</p>
+					<p>En el terminal donde lanzaste los test puedes introducir comandos</p>
+					<p>escribe "c" avanza un paso en los tests</p>
+				</section>
+				<section>
+					<p>¿Qué está pasando?? III</p>
+					<p>browser.explore()</p>
+					<p>Pausa el navegador y te perminte escribir comandos en la terminal por ejemplo element(by.css('.e2e-button')).isPresent();</p>
+					<p>no puedes avanzar con el pause</p>
+				</section>				
+				<section>
+					<pre><code class="json" data-trim data-noescape>
+					{
+						"name": "Launch e2e",
+						"type": "node",
+						"request": "launch",
+						"runtimeExecutable": "/home/juanfran/.nvm/versions/node/v7.2.1/bin/node",
+						"program": "${workspaceRoot}/node_modules/protractor/bin/protractor",
+						"protocol": "inspector",
+						"args": ["${workspaceRoot}/protractor.conf.js"]
+					  }
+					</code></pre>
+				</section>
+				<section>
+					<p>identificar más rapido que browser wait falla</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						browser.wait(() => {
+							return false;
+						});
+
+						// x segundos despues
+						// Error: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL.
+
+						browser.wait(() => {
+							return false;
+						}, 1000, 'custom message');
+
+						// Failed: custom message
+						// Wait timed out after 1000ms	
+					</code></pre>	
+				</section>
+				<!-- end Qué está pasando -->
 			</div>
 		</div>
 
