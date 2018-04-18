@@ -75,7 +75,47 @@
 						// Failed: custom message
 						// Wait timed out after 1000ms	
 					</code></pre>	
-				</section>				
+				</section>	
+				
+				<section>
+					<section>
+						<p>Hightlight clicks</p>
+						<pre><code class="typescript" data-trim data-noescape>
+							let config = {
+								baseUrl: 'http://localhost:8000/',
+								//Enabling blocking proxy
+								useBlockingProxy: true,
+								//Delaying for 3 sec before interacting with element and hightlighting it
+								highlightDelay: 3000,
+								// disable directConnect
+								directConnect: false,
+								// etc
+							};
+						</code></pre>
+					</section>
+					<section>
+						<img src="/imgs/s1.jpg"	 />
+					</section>
+					<section>
+							<p>Logs</p>
+							<pre><code class="typescript" data-trim data-noescape>
+								let config = {
+									baseUrl: 'http://localhost:8000/',
+									//Enabling blocking proxy
+									useBlockingProxy: true,
+									//Set ‘logs’ folder as location to save log file.
+									webDriverLogDir: './',
+									// disable directConnect
+									directConnect: false,
+									// etc
+								};
+							</code></pre>
+						</section>
+						<section>
+							<p>tail -f webdriver_log_13x1hwor.txt</p>
+							<img src="/imgs/s2.jpg"	 />
+						</section>					
+				</section>							
 				<!-- end tips varios -->
 
 				<!-- expected conditions -->
@@ -235,6 +275,33 @@
 
 				<!-- Qué está pasando -->
 				<section>
+					<section>
+					<p>¿Qué está pasando??</p>
+					<pre><code class="typescript" data-trim data-noescape>
+						it('filter translations by translated', () => {
+							navTranslations();
+						
+							debugger;
+							const translations = new TranslationsHelper();
+						
+							translations.filterByTranslated();
+						
+							expect((translations.getTranslatedFilter()).getAttribute('class')).toMatch('active');
+							takeScreenshot('translations_filter_by_translated');
+						
+							const fake = element(by.css('fake')).count();
+							});
+					</code></pre>
+					</section>
+					<section>
+						<pre><code class="bash" data-trim data-noescape>
+							node --inspect-brk node_modules/.bin/protractor protractor.conf.js
+						</code></pre>
+
+						<p>chrome://inspect/#devices / Insepect / F8</p>
+					</section>
+				</section>				
+				<section>
 					<p>¿Qué está pasando?? I</p>
 					<pre><code class="typescript" data-trim data-noescape>
 						browser.pause();
@@ -252,7 +319,13 @@
 					<p>browser.explore()</p>
 					<p>Pausa el navegador y te perminte escribir comandos en la terminal por ejemplo element(by.css('.e2e-button')).isPresent();</p>
 					<p>no puedes avanzar con el pause</p>
-				</section>				
+				</section>	
+				<section>
+						<p>¿Qué está pasando?? IV</p>
+						<p>browser.debugger();</p>
+						<p>node_modules/.bin/protractor debug protractor.conf.js</p>
+						<p>window.clientSideScripts.findInputs('test');</p>
+					</section>									
 				<section>
 					<pre><code class="json" data-trim data-noescape>
 					{
